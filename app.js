@@ -21,15 +21,30 @@ function App() {
   const [products, setProducts] = React.useState([]);
   const [type, setType] = React.useState("All");
   const [filterData, setFilterData] = React.useState([]);
+  const [searchValue, setSearchValue] = React.useState("");
 
   React.useEffect(() => {
     (async () => {
       const res = await axios.get(`https://fakestoreapi.com/products`);
-      console.log(res);
       setProducts(res.data);
       setFilterData(res.data);
     })();
   }, []);
+
+  React.useEffect(() => {
+    const text = searchValue.toLowerCase().trim();
+    const searchData = filterData.filter((el) => {
+      const titles = el.title.toLowerCase().split(" ").includes(text);
+      const description = el.description
+        .toLowerCase()
+        .split(" ")
+        .includes(text);
+
+      return titles || description;
+    });
+    if (searchData.length <= 0) return;
+    setFilterData(searchData);
+  }, [searchValue]);
 
   function handleSelectType(e) {
     setType(e.target.value);
@@ -44,6 +59,10 @@ function App() {
     setFilterData(filterData);
   }
 
+  function handleSearchProducts(e) {
+    setSearchValue(e.target.value);
+  }
+
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
@@ -51,8 +70,8 @@ function App() {
           type="text"
           placeholder="搜尋產品..."
           className="p-2 border rounded-md flex-grow"
-          value={""}
-          onChange={() => {}}
+          value={searchValue}
+          onChange={(e) => handleSearchProducts(e)}
         />
         <select
           className="p-2 border rounded-md"
@@ -66,7 +85,7 @@ function App() {
           ))}
         </select>
       </div>
-      <p>{type}</p>
+      <p>{searchValue}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filterData.map((product) => {
           const { id, title, price, description, category, image, rating } =
@@ -84,12 +103,13 @@ function App() {
                   className="w-full h-48 object-cover object-center hover:scale-110 transition duration-200"
                 />
                 <button
-                  onClick={() => {}}
+                  useRef={ref}
+                  onClick={() => handleClick()}
                   className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    fill={"none"}
+                    fill={save ? `currentColor` : `none`}
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     className="w-6 h-6 text-red-500"
