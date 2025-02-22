@@ -92,13 +92,12 @@ function App() {
                   className="w-full h-48 object-cover object-center hover:scale-110 transition duration-200"
                 />
                 <button
-                  useRef={ref}
-                  onClick={() => handleClick()}
+                  onClick={() => {}}
                   className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    fill={save ? `currentColor` : `none`}
+                    fill={`none`}
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     className="w-6 h-6 text-red-500"
